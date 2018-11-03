@@ -54,6 +54,11 @@ import { GeoJSONFillable, Patterns} from 'react-leaflet-geojson-patterns';
 </Map>;
 ```
 
+## Built With
+
+- [Leaflet.pattern](https://github.com/teastman/Leaflet.pattern) - The plugin for leaflet that allows for use of fill patterns in Paths.
+- [Leaflet-react](https://react-leaflet.js.org) - React components for 🍃 Leaflet maps
+
 ## License
 
 MIT © [lkazberova](https://github.com/lkazberova)
