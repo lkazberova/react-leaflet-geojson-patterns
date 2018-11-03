@@ -4,10 +4,9 @@
  (c) 2015, Tyler Eastman
 */
 let getId = value => {
-  const id = value.options.key || L.stamp(value);
-  // console.log(`output: ${stamp}`, value);
-  return id;
-};
+  const id = value.options.key || L.stamp(value)
+  return id
+}
 let L = window.L;
 
 (function(window, document, undefined) {
@@ -25,7 +24,7 @@ let L = window.L;
       height: 8,
       patternUnits: 'userSpaceOnUse',
       patternContentUnits: 'userSpaceOnUse',
-      key: '',
+      key: ''
       // angle: <0 - 360>
       // patternTransform: <transform-list>
     },
@@ -34,228 +33,230 @@ let L = window.L;
     _update: L.Util.falseFn,
 
     initialize: function(options) {
-      this._shapes = {};
-      if (!options.key) throw Error('Should define a unique option key');
-      L.setOptions(this, options);
+      this._shapes = {}
+      if (!options.key) throw Error('Should define a unique option key')
+      L.setOptions(this, options)
     },
 
     onAdd: function(map) {
-      this._map = map.target ? map.target : map;
-      this._map._initDefRoot();
+      this._map = map.target ? map.target : map
+      if (!this._map._initDefRoot) {
+        debugger
+      }
+      this._map._initDefRoot()
 
       // Create the DOM Object for the pattern.
-      this._initDom();
+      this._initDom()
 
       // Any shapes that were added before this was added to the map need to have their onAdd called.
       for (var i in this._shapes) {
-        this._shapes[i].onAdd(this);
+        this._shapes[i].onAdd(this)
       }
 
       // Call any children that want to add their own shapes.
-      this._addShapes();
+      this._addShapes()
 
       // Add the DOM Object to the DOM Tree
-      this._addDom();
-      this.redraw();
+      this._addDom()
+      this.redraw()
 
       if (this.getEvents) {
-        this._map.on(this.getEvents(), this);
+        this._map.on(this.getEvents(), this)
       }
-      this.fire('add');
-      this._map.fire('patternadd', { pattern: this });
-      console.log('Added pattern');
+      this.fire('add')
+      this._map.fire('patternadd', { pattern: this })
     },
 
     onRemove: function() {
-      console.log('onRemove');
-      this._removeDom();
+      this._removeDom()
     },
 
     redraw: function() {
       if (this._map) {
-        this._update();
+        this._update()
         for (var i in this._shapes) {
-          this._shapes[i].redraw();
+          this._shapes[i].redraw()
         }
       }
-      return this;
+      return this
     },
 
     setStyle: function(style) {
-      L.setOptions(this, style);
+      L.setOptions(this, style)
       if (this._map) {
-        this._updateStyle();
-        this.redraw();
+        this._updateStyle()
+        this.redraw()
       }
-      return this;
+      return this
     },
 
     addTo: function(map) {
-      map.addPattern(this);
-      return this;
+      map.addPattern(this)
+      return this
     },
 
     remove: function() {
-      return this.removeFrom(this._map);
+      return this.removeFrom(this._map)
     },
 
     removeFrom: function(map) {
       if (map) {
-        map.removePattern(this);
+        map.removePattern(this)
       }
-      return this;
-    },
-  });
+      return this
+    }
+  })
 
   L.Map.addInitHook(function() {
-    this._patterns = {};
-  });
+    this._patterns = {}
+  })
 
   L.Map.include({
     addPattern: function(pattern) {
-      var id = getId(pattern);
+      var id = getId(pattern)
       if (this._patterns[id]) {
-        return pattern;
+        return pattern
       }
-      this._patterns[id] = pattern;
+      this._patterns[id] = pattern
 
-      this.whenReady(pattern.onAdd, pattern);
-      return this;
+      this.whenReady(pattern.onAdd, pattern)
+      return this
     },
 
     removePattern: function(pattern) {
-      var id = getId(pattern);
+      var id = getId(pattern)
       if (!this._patterns[id]) {
-        return this;
+        return this
       }
 
       if (this._loaded) {
-        pattern.onRemove(this);
+        pattern.onRemove(this)
       }
 
       if (pattern.getEvents) {
-        this.off(pattern.getEvents(), pattern);
+        this.off(pattern.getEvents(), pattern)
       }
 
-      delete this._patterns[id];
+      delete this._patterns[id]
 
       if (this._loaded) {
-        this.fire('patternremove', { pattern: pattern });
-        pattern.fire('remove');
+        this.fire('patternremove', { pattern: pattern })
+        pattern.fire('remove')
       }
 
-      pattern._map = null;
-      return this;
+      pattern._map = null
+      return this
     },
 
     hasPattern: function(pattern) {
-      return !!pattern && getId(pattern) in this._patterns;
-    },
-  });
+      return !!pattern && getId(pattern) in this._patterns
+    }
+  })
 
-  L.Pattern.SVG_NS = 'http://www.w3.org/2000/svg';
+  L.Pattern.SVG_NS = 'http://www.w3.org/2000/svg'
 
   L.Pattern = L.Pattern.extend({
     _createElement: function(name) {
-      return document.createElementNS(L.Pattern.SVG_NS, name);
+      return document.createElementNS(L.Pattern.SVG_NS, name)
     },
 
     _initDom: function() {
-      this._dom = this._createElement('pattern');
+      this._dom = this._createElement('pattern')
       if (this.options.className) {
-        L.DomUtil.addClass(this._dom, this.options.className);
+        L.DomUtil.addClass(this._dom, this.options.className)
       }
-      this._updateStyle();
+      this._updateStyle()
     },
 
     _addDom: function() {
-      this._map._defRoot.appendChild(this._dom);
+      this._map._defRoot.appendChild(this._dom)
     },
 
     _removeDom: function() {
-      L.DomUtil.remove(this._dom);
+      L.DomUtil.remove(this._dom)
     },
 
     _updateStyle: function() {
-      var dom = this._dom,
-        options = this.options;
+      var dom = this._dom
+
+      var options = this.options
 
       if (!dom) {
-        return;
+        return
       }
 
-      dom.setAttribute('id', getId(this));
-      dom.setAttribute('x', options.x);
-      dom.setAttribute('y', options.y);
-      dom.setAttribute('width', options.width);
-      dom.setAttribute('height', options.height);
-      dom.setAttribute('patternUnits', options.patternUnits);
-      dom.setAttribute('patternContentUnits', options.patternContentUnits);
+      dom.setAttribute('id', getId(this))
+      dom.setAttribute('x', options.x)
+      dom.setAttribute('y', options.y)
+      dom.setAttribute('width', options.width)
+      dom.setAttribute('height', options.height)
+      dom.setAttribute('patternUnits', options.patternUnits)
+      dom.setAttribute('patternContentUnits', options.patternContentUnits)
 
       if (options.patternTransform || options.angle) {
         var transform = options.patternTransform
           ? options.patternTransform + ' '
-          : '';
-        transform += options.angle ? 'rotate(' + options.angle + ') ' : '';
-        dom.setAttribute('patternTransform', transform);
+          : ''
+        transform += options.angle ? 'rotate(' + options.angle + ') ' : ''
+        dom.setAttribute('patternTransform', transform)
       } else {
-        dom.removeAttribute('patternTransform');
+        dom.removeAttribute('patternTransform')
       }
 
       for (var i in this._shapes) {
-        this._shapes[i]._updateStyle();
+        this._shapes[i]._updateStyle()
       }
-    },
-  });
+    }
+  })
 
   L.Map.include({
     _initDefRoot: function() {
       if (!this._defRoot) {
         if (typeof this.getRenderer === 'function') {
-          var renderer = this.getRenderer(this);
-          this._defRoot = L.Pattern.prototype._createElement('defs');
-          renderer._container.appendChild(this._defRoot);
+          var renderer = this.getRenderer(this)
+          this._defRoot = L.Pattern.prototype._createElement('defs')
+          renderer._container.appendChild(this._defRoot)
         } else {
           if (!this._pathRoot) {
-            this._initPathRoot();
+            this._initPathRoot()
           }
-          this._defRoot = L.Pattern.prototype._createElement('defs');
-          this._pathRoot.appendChild(this._defRoot);
+          this._defRoot = L.Pattern.prototype._createElement('defs')
+          this._pathRoot.appendChild(this._defRoot)
         }
       }
-    },
-  });
+    }
+  })
 
   if (L.SVG) {
     L.SVG.include({
       _superUpdateStyle: L.SVG.prototype._updateStyle,
 
       _updateStyle: function(layer) {
-        this._superUpdateStyle(layer);
+        this._superUpdateStyle(layer)
 
         if (layer.options.fill && layer.options.fillPattern) {
           layer._path.setAttribute(
             'fill',
             'url(#' + getId(layer.options.fillPattern) + ')'
-          );
+          )
         }
-      },
-    });
+      }
+    })
   } else {
     L.Path.include({
       _superUpdateStyle: L.Path.prototype._updateStyle,
 
       _updateStyle: function() {
-        this._superUpdateStyle();
+        this._superUpdateStyle()
 
         if (this.options.fill && this.options.fillPattern) {
           this._path.setAttribute(
             'fill',
             'url(#' + getId(this.options.fillPattern) + ')'
-          );
+          )
         }
-      },
-    });
+      }
+    })
   }
 
   /*
@@ -269,7 +270,7 @@ let L = window.L;
       color: '#000000',
       spaceColor: '#ffffff',
       opacity: 1.0,
-      spaceOpacity: 0.0,
+      spaceOpacity: 0.0
     },
 
     _addShapes: function() {
@@ -277,38 +278,38 @@ let L = window.L;
         stroke: true,
         weight: this.options.weight,
         color: this.options.color,
-        opacity: this.options.opacity,
-      });
+        opacity: this.options.opacity
+      })
 
       this._space = new L.PatternPath({
         stroke: true,
         weight: this.options.spaceWeight,
         color: this.options.spaceColor,
-        opacity: this.options.spaceOpacity,
-      });
+        opacity: this.options.spaceOpacity
+      })
 
-      this.addShape(this._stripe);
-      this.addShape(this._space);
+      this.addShape(this._stripe)
+      this.addShape(this._space)
 
-      this._update();
+      this._update()
     },
 
     _update: function() {
       this._stripe.options.d =
-        'M0 ' + this._stripe.options.weight / 2 + ' H ' + this.options.width;
+        'M0 ' + this._stripe.options.weight / 2 + ' H ' + this.options.width
       this._space.options.d =
         'M0 ' +
         (this._stripe.options.weight + this._space.options.weight / 2) +
         ' H ' +
-        this.options.width;
+        this.options.width
     },
 
-    setStyle: L.Pattern.prototype.setStyle,
-  });
+    setStyle: L.Pattern.prototype.setStyle
+  })
 
   L.stripePattern = function(options) {
-    return new L.StripePattern(options);
-  };
+    return new L.StripePattern(options)
+  }
 
   /*
      * L.PatternShape is the base class that is used to define the shapes in Patterns.
@@ -328,133 +329,133 @@ let L = window.L;
       // fill: false
       // fillColor: same as color by default
       fillOpacity: 0.2,
-      fillRule: 'evenodd',
+      fillRule: 'evenodd'
       // fillPattern: L.Pattern
     },
 
     initialize: function(options) {
-      L.setOptions(this, options);
+      L.setOptions(this, options)
     },
 
     // Called when the parent Pattern get's added to the map,
     // or when added to a Pattern that is already on the map.
     onAdd: function(pattern) {
-      this._pattern = pattern;
+      this._pattern = pattern
       if (this._pattern._dom) {
-        this._initDom(); // This function is implemented by it's children.
-        this._addDom();
+        this._initDom() // This function is implemented by it's children.
+        this._addDom()
       }
     },
 
     addTo: function(pattern) {
-      pattern.addShape(this);
-      return this;
+      pattern.addShape(this)
+      return this
     },
 
     redraw: function() {
       if (this._pattern) {
-        this._updateShape(); // This function is implemented by it's children.
+        this._updateShape() // This function is implemented by it's children.
       }
-      return this;
+      return this
     },
 
     setStyle: function(style) {
-      L.setOptions(this, style);
+      L.setOptions(this, style)
       if (this._pattern) {
-        this._updateStyle();
+        this._updateStyle()
       }
-      return this;
+      return this
     },
 
     setShape: function(shape) {
-      this.options = L.extend({}, this.options, shape);
-      this._updateShape();
-    },
-  });
+      this.options = L.extend({}, this.options, shape)
+      this._updateShape()
+    }
+  })
 
   L.Pattern.include({
     addShape: function(shape) {
-      var id = getId(shape);
+      var id = getId(shape)
       if (this._shapes[id]) {
-        return shape;
+        return shape
       }
-      this._shapes[id] = shape;
-      shape.onAdd(this);
-    },
-  });
+      this._shapes[id] = shape
+      shape.onAdd(this)
+    }
+  })
 
-  L.PatternShape.SVG_NS = 'http://www.w3.org/2000/svg';
+  L.PatternShape.SVG_NS = 'http://www.w3.org/2000/svg'
 
   L.PatternShape = L.PatternShape.extend({
     _createElement: function(name) {
-      console.log('create element', name);
-      return document.createElementNS(L.PatternShape.SVG_NS, name);
+      return document.createElementNS(L.PatternShape.SVG_NS, name)
     },
 
     _initDom: L.Util.falseFn,
     _updateShape: L.Util.falseFn,
 
     _initDomElement: function(type) {
-      this._dom = this._createElement(type);
+      this._dom = this._createElement(type)
       if (this.options.className) {
-        L.DomUtil.addClass(this._dom, this.options.className);
+        L.DomUtil.addClass(this._dom, this.options.className)
       }
-      this._updateStyle();
+      this._updateStyle()
     },
 
     _addDom: function() {
-      this._pattern._dom.appendChild(this._dom);
+      this._pattern._dom.appendChild(this._dom)
     },
 
     _updateStyle: function() {
-      var dom = this._dom,
-        options = this.options;
+      var dom = this._dom
+
+      var options = this.options
 
       if (!dom) {
-        return;
+        return
       }
 
       if (options.stroke) {
-        dom.setAttribute('stroke', options.color);
-        dom.setAttribute('stroke-opacity', options.opacity);
-        dom.setAttribute('stroke-width', options.weight);
-        dom.setAttribute('stroke-linecap', options.lineCap);
-        dom.setAttribute('stroke-linejoin', options.lineJoin);
+        dom.setAttribute('stroke', options.color)
+        dom.setAttribute('stroke-opacity', options.opacity)
+        dom.setAttribute('stroke-width', options.weight)
+        dom.setAttribute('stroke-linecap', options.lineCap)
+        dom.setAttribute('stroke-linejoin', options.lineJoin)
 
         if (options.dashArray) {
-          dom.setAttribute('stroke-dasharray', options.dashArray);
+          dom.setAttribute('stroke-dasharray', options.dashArray)
         } else {
-          dom.removeAttribute('stroke-dasharray');
+          dom.removeAttribute('stroke-dasharray')
         }
 
         if (options.dashOffset) {
-          dom.setAttribute('stroke-dashoffset', options.dashOffset);
+          dom.setAttribute('stroke-dashoffset', options.dashOffset)
         } else {
-          dom.removeAttribute('stroke-dashoffset');
+          dom.removeAttribute('stroke-dashoffset')
         }
       } else {
-        dom.setAttribute('stroke', 'none');
+        dom.setAttribute('stroke', 'none')
       }
 
       if (options.fill) {
         if (options.fillPattern) {
-          dom.setAttribute('fill', 'url(#' + getId(options.fillPattern) + ')');
+          dom.setAttribute('fill', 'url(#' + getId(options.fillPattern) + ')')
         } else {
-          dom.setAttribute('fill', options.fillColor || options.color);
+          dom.setAttribute('fill', options.fillColor || options.color)
         }
-        dom.setAttribute('fill-opacity', options.fillOpacity);
-        dom.setAttribute('fill-rule', options.fillRule || 'evenodd');
+        dom.setAttribute('fill-opacity', options.fillOpacity)
+        dom.setAttribute('fill-rule', options.fillRule || 'evenodd')
       } else {
-        dom.setAttribute('fill', 'none');
+        dom.setAttribute('fill', 'none')
       }
 
       dom.setAttribute(
         'pointer-events',
         options.pointerEvents ||
           (options.interactive ? 'visiblePainted' : 'none')
-      );
-    },
-  });
+      )
+    }
+  })
 
   /*
      * L.PatternPath is the implementation of PatternShape for adding Paths
@@ -466,16 +467,16 @@ let L = window.L;
     //	},
 
     _initDom: function() {
-      this._initDomElement('path');
+      this._initDomElement('path')
     },
 
     _updateShape: function() {
       if (!this._dom) {
-        return;
+        return
       }
-      this._dom.setAttribute('d', this.options.d);
-    },
-  });
+      this._dom.setAttribute('d', this.options.d)
+    }
+  })
 
   /*
      * L.PatternCircle is the implementation of PatternShape for adding Circles
@@ -485,22 +486,22 @@ let L = window.L;
     options: {
       x: 0,
       y: 0,
-      radius: 0,
+      radius: 0
     },
 
     _initDom: function() {
-      this._initDomElement('circle');
+      this._initDomElement('circle')
     },
 
     _updateShape: function() {
       if (!this._dom) {
-        return;
+        return
       }
-      this._dom.setAttribute('cx', this.options.x);
-      this._dom.setAttribute('cy', this.options.y);
-      this._dom.setAttribute('r', this.options.radius);
-    },
-  });
+      this._dom.setAttribute('cx', this.options.x)
+      this._dom.setAttribute('cy', this.options.y)
+      this._dom.setAttribute('r', this.options.radius)
+    }
+  })
 
   /*
      * L.PatternRect is the implementation of PatternShape for adding Rectangles
@@ -511,29 +512,71 @@ let L = window.L;
       x: 0,
       y: 0,
       width: 10,
-      height: 10,
+      height: 10
       // rx: x radius for rounded corners
       // ry: y radius for rounded corners
     },
 
     _initDom: function() {
-      this._initDomElement('rect');
+      this._initDomElement('rect')
     },
 
     _updateShape: function() {
       if (!this._dom) {
-        return;
+        return
       }
-      this._dom.setAttribute('x', this.options.x);
-      this._dom.setAttribute('y', this.options.y);
-      this._dom.setAttribute('width', this.options.width);
-      this._dom.setAttribute('height', this.options.height);
+      this._dom.setAttribute('x', this.options.x)
+      this._dom.setAttribute('y', this.options.y)
+      this._dom.setAttribute('width', this.options.width)
+      this._dom.setAttribute('height', this.options.height)
       if (this.options.rx) {
-        this._dom.setAttribute('rx', this.options.rx);
+        this._dom.setAttribute('rx', this.options.rx)
       }
       if (this.options.ry) {
-        this._dom.setAttribute('ry', this.options.ry);
+        this._dom.setAttribute('ry', this.options.ry)
       }
+    }
+  })
+
+  L.CheckerBoardPattern = L.Pattern.extend({
+    options: {
+      color: '#000000',
+      fillOpacity: 1
     },
-  });
-})(window, document);
+
+    _addShapes: function() {
+      this._shape1 = new L.PatternRect({
+        stroke: false,
+        fillOpacity: this.options.fillOpacity,
+        color: this.options.color,
+        fill: this.options.color,
+        x: 0,
+        y: 0,
+        width: this.options.width / 2,
+        height: this.options.height / 2
+      })
+
+      this._shape2 = new L.PatternRect({
+        stroke: false,
+        fillOpacity: this.options.fillOpacity,
+        color: this.options.color,
+        fill: this.options.color,
+        x: this.options.width / 2,
+        y: this.options.height / 2,
+        width: this.options.width / 2,
+        height: this.options.height / 2
+      })
+
+      this.addShape(this._shape1)
+      this.addShape(this._shape2)
+
+      this._update()
+    },
+
+    _update: function() {
+
+    },
+
+    setStyle: L.Pattern.prototype.setStyle
+  })
+})(window, document)

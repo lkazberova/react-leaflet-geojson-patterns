@@ -48,9 +48,17 @@ class App extends React.Component {
     this.setState({
       selectedColor: this.state.selectedColor !== 'red' ? 'red' : 'green'
     });
+
   getFillPattern = feature => {
     const { selectedColor } = this.state
+
     switch (feature.properties.style) {
+      case 'checkerboard': return Patterns.CheckerBoardPattern({
+        key: 'checkerboard' + selectedColor,
+        color: selectedColor,
+        width: 20,
+        height: 20
+      })
       case 'circle':
         return Patterns.CirclePattern({
           x: 7,
