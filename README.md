@@ -13,17 +13,45 @@ npm install --save react-leaflet-geojson-patterns
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { Map, TileLayer } from 'react-leaflet';
+import { GeoJSONFillable, Patterns} from 'react-leaflet-geojson-patterns';
 
-import MyComponent from 'react-leaflet-geojson-patterns'
-
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
+<Map center={[6.722, -1.555]} zoom={14} style={{ height: '300px' }}>
+  <TileLayer
+    attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  />
+  <GeoJSONFillable
+    data={{
+      type: 'FeatureCollection',
+      bbox: [-3.255, 4.738, 1.191, 11.173],
+      features: [
+        {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [-1.552, 6.712],
+                [-1.569, 6.722],
+                [-1.569, 6.724],
+                [-1.552, 6.734],
+                [-1.54, 6.728],
+                [-1.552, 6.712],
+              ],
+            ],
+          },
+        },
+      ],
+    }}
+    style={feature => ({
+      color: 'green',
+      fillPattern: Patterns.StripePattern({ color: 'green', key: 'stripe' }),
+    })}
+  />
+</Map>;
 ```
 
 ## License
