@@ -1,6 +1,6 @@
-import { BasePattern } from './BasePattern';
+import { BasePattern } from './BasePattern'
 
-const L = window.L;
+const L = window.L
 
 /**
  * **key**: {string} - required.<br/>
