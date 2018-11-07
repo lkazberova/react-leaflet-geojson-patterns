@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/react-leaflet-geojson-patterns/precache-manifest.85c6c0ed3aff16c6b4570f6cbfc1f792.js"
+  "/react-leaflet-geojson-patterns/precache-manifest.8928110039bc2024b5afdb40765886c6.js"
 );
 
 workbox.clientsClaim();
