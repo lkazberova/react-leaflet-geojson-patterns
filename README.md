@@ -2,7 +2,7 @@
 
 > The component extended default GeoJSON for support svg patterns
 
-[![NPM](https://img.shields.io/npm/v/react-leaflet-geojson-patterns.svg)](https://www.npmjs.com/package/react-leaflet-geojson-patterns) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Build Status](https://img.shields.io/travis/lkazberova/react-leaflet-geojson-patterns/master.svg)](https://travis-ci.org/lkazberova/react-leaflet-geojson-patterns) [![NPM](https://img.shields.io/npm/v/react-leaflet-geojson-patterns.svg)](https://www.npmjs.com/package/react-leaflet-geojson-patterns) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 **[Demo](https://lkazberova.github.io/react-leaflet-geojson-patterns/)** | **[Documentation](https://lkazberova.github.io/react-leaflet-geojson-patterns/documentation/)**
 
